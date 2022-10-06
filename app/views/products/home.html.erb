@@ -1,0 +1,16 @@
+<% if @product ==nil %>
+  No Products to display
+<% else %>
+  <h1>
+    <%= @product.name %>
+  </h1>
+  <% if @product.image.attached? %>
+    <%= image_tag @product.image.variant(resize_to_limit:[400,400]) %>
+  <% end %>
+  <p>
+    Description: <%= @product.description %>
+  </p>
+  <p>
+    Price: <%= number_to_currency(@product.price/100.00) %><br>
+  </p>
+<% end %>
