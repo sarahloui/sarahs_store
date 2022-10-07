@@ -6,6 +6,10 @@ Rails.application.routes.draw do
 
   root "products#home"
   get "products/home"
+  get "orders/new"
+  get "orders/show"
+
   resources :products
+  resources :orders
 
 end

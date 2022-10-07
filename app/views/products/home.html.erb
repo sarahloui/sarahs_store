@@ -13,4 +13,5 @@
   <p>
     Price: <%= number_to_currency(@product.price/100.00) %><br>
   </p>
+  <%= link_to "Buy now!", new_order_path(:product => @product) %>
 <% end %>

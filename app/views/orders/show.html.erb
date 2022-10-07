@@ -1,0 +1,13 @@
+<div>Order #<%= @order.id %> <br> </div>
+Product: <%= @order.product.name %> <br>
+Order Total: <%= number_to_currency(@order.product.price/100.00) %><br><br>
+Name: <%= @order.first_name%> <%= @order.last_name %><br>
+Address:
+  <%= @order.address_street %><br>
+  <%= @order.address_city %>,
+  <%= @order.address_state %>,
+  <%= @order.address_zip %><br>
+Email: <%= @order.email %> <br>
+Phone Number: <%= @order.phone_number %> <br>
+
+
