@@ -5,18 +5,31 @@ class OrdersController < ApplicationController
   end
 
   def create
-    @product= Product.find(params[:product])
-    @order = Order.new
-    @order = @product.build_order(order_params)
-    if @order.save
-      redirect_to @order
-    else
-     render 'new', status: :unprocessable_entity
-    end
+    price = params[:price_amount]
+    product_title = params[:product_name]
+    session = Stripe::Checkout::Session.create({
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: product_title,
+            },
+            unit_amount: price,
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: root_url + 'orders/success',
+      cancel_url: root_url + 'orders/cancel',
+    })
+    redirect_to session.url, allow_other_host: true
   end
 
   def show
     @order = Order.find(params[:id])
+  end
+
+  def cancel
   end
 
   def order_params
