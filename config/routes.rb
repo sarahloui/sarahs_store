@@ -7,10 +7,10 @@ Rails.application.routes.draw do
   root "products#home"
   get "products/home"
   match 'checkout_path', to: 'orders#create', via: :post
+  get "orders/success", to: 'orders#success'
   get "orders/new"
-  get "orders/show"
   get "orders/cancel"
-  get "orders/success"
+
 
   resources :products
   resources :orders

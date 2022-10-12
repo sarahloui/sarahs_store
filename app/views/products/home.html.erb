@@ -14,8 +14,7 @@
     Price: <%= number_to_currency(@product.price/100.00) %><br>
   </p>
    <%= form_tag checkout_path_url,  method: :post, data: { turbo: false } do %>
-    <input type="hidden" name="price_amount" value="<%= @product.price %>" />
-    <input type="hidden" name="product_name" value="<%= @product.name %>" />
+    <input type="hidden" name="product_id" value="<%= @product.id %>" />
     <%= submit_tag "Buy Now!" %>
   <% end %>
 

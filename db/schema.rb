@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_06_213146) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_12_135153) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -40,9 +40,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_06_213146) do
   end
 
   create_table "orders", force: :cascade do |t|
-    t.string "first_name"
-    t.string "last_name"
-    t.string "address_street"
+    t.string "name"
+    t.string "address_line1"
+    t.string "address_line2"
     t.string "address_city"
     t.string "address_state"
     t.string "address_zip"
@@ -51,6 +51,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_06_213146) do
     t.integer "product_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "checkout_session"
     t.index ["product_id"], name: "index_orders_on_product_id"
   end
 
