@@ -1,13 +1,18 @@
 <h1>Thank you for your order, <%= @completed_checkout_session.customer_details.name %>!</h1>
 
 <h2>Your purchase of <%= @item_sold.description %> for
-<%= @item_sold.price.unit_amount %> is complete.</h2>
+<%= number_to_currency(@item_sold.price.unit_amount/100.00) %> is complete. <h2>
 
-Your order details: <br>
+<h3>Your order details:</h3>
 
 Order #<%= @completed_checkout_session.client_reference_id %>
 
-<div><%= @completed_checkout_session.customer_details.phone %></div>
-<div><%= @completed_checkout_session.customer_details.email %></div>
+<div>Phone: <%= @completed_checkout_session.customer_details.phone %></div>
+<div>Email: <%= @completed_checkout_session.customer_details.email %></div>
+<div>Shipping Address:
 <div><%= @completed_checkout_session.shipping_details.name %></div>
 <div><%= @completed_checkout_session.shipping_details.address.line1 %></div>
+<div><%= @completed_checkout_session.shipping_details.address.line2 %></div>
+<div>   <%= @completed_checkout_session.shipping_details.address.city %>,
+        <%= @completed_checkout_session.shipping_details.address.state %>,
+        <%= @completed_checkout_session.shipping_details.address.postal_code %></div>

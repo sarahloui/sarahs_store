@@ -18,7 +18,7 @@ class OrdersController < ApplicationController
     order = product.build_order
 
     if order.save
-      session = Stripe::Checkout::Session.create({
+      checkout_session = Stripe::Checkout::Session.create({
         client_reference_id: order.id,
         phone_number_collection: {
           enabled: true
@@ -38,9 +38,10 @@ class OrdersController < ApplicationController
         }],
         mode: 'payment',
         success_url: root_url + 'orders/success?session_id={CHECKOUT_SESSION_ID}',
-        cancel_url: root_url + 'orders/cancel',
+        cancel_url: root_url + 'orders/cancel?session_id={CHECKOUT_SESSION_ID}'
       })
-      redirect_to session.url, allow_other_host: true
+      order.update(checkout_session: checkout_session.id)
+      redirect_to checkout_session.url, allow_other_host: true
     else
       redirect_to root_url
     end
@@ -51,16 +52,23 @@ class OrdersController < ApplicationController
   end
 
   def cancel
-    # delete order created above?
-
-
+    incomplete_checkout_session = Stripe::Checkout::Session.retrieve(params[:session_id])
+    order = Order.find_by(id: incomplete_checkout_session.client_reference_id)
+    if (order!=nil && order.checkout_session==incomplete_checkout_session.id && order.status==nil)
+      order.delete
+      flash[:alert]="Checkout session cancelled"
+    else
+      flash[:alert]="No matching checkout session to cancel"
+    end
+    redirect_to root_url
   end
 
   def success
     @completed_checkout_session = Stripe::Checkout::Session.retrieve(params[:session_id])
     @item_sold = Stripe::Checkout::Session.list_line_items(params[:session_id]).data[0]
     order = Order.find_by(id: @completed_checkout_session.client_reference_id)
-    if !order.update(name: @completed_checkout_session.shipping_details.name,
+    if (order.checkout_session == @completed_checkout_session.id)
+      if !order.update(name: @completed_checkout_session.shipping_details.name,
                       address_line1: @completed_checkout_session.shipping_details.address.line1,
                       address_line2: @completed_checkout_session.shipping_details.address.line2,
                       address_city: @completed_checkout_session.shipping_details.address.city,
@@ -68,8 +76,10 @@ class OrdersController < ApplicationController
                       address_zip: @completed_checkout_session.shipping_details.address.postal_code,
                       email: @completed_checkout_session.customer_details.email,
                       phone_number: @completed_checkout_session.customer_details.phone,
-                      checkout_session: params[:session_id])
-      render 'cancel'
+                      status: @completed_checkout_session.payment_status)
+        flash[:alert]="Order could not be saved"
+        redirect_to root_url
+      end
     end
   end
 

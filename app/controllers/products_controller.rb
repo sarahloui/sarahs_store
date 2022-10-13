@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
   def home
-      @product = Product.first
+      @product = Product.second
   end
 
   def show
