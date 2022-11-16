@@ -11,10 +11,10 @@ class OrdersController < ApplicationController
      #Check that product is not already associated with an order
     if product.order!=nil
       #Check that product hasn't been purchased already
-      if product.status == "sold"
+      if product.sold?
         flash[:alert] = "Sorry, the item that you selected is sold and is no longer available for purchase"
         redirect_to root_url and return
-      elsif product.status =="on hold"
+      elsif product.on_hold?
         #Product has been in other users cart for less than 5 minutes
         if product.order.created_at.since(300)>DateTime.now
           flash[:alert] = "The item you selected is currently on hold, please try again in a few minutes"
@@ -27,7 +27,7 @@ class OrdersController < ApplicationController
             Stripe::Checkout::Session.expire(product.order.checkout_session)
           end
           product.order.delete
-          product.update(status: "available")
+          product.available!
         end
       end
     end
@@ -36,7 +36,7 @@ class OrdersController < ApplicationController
     order = product.build_order
 
     if order.save
-      product.update(status: "on hold")
+      product.on_hold!
       checkout_session = Stripe::Checkout::Session.create({
         client_reference_id: order.id,
         phone_number_collection: {
@@ -74,6 +74,7 @@ class OrdersController < ApplicationController
     incomplete_checkout_session = Stripe::Checkout::Session.retrieve(params[:session_id])
     order = Order.find_by(id: incomplete_checkout_session.client_reference_id)
     if (order!=nil && order.checkout_session==incomplete_checkout_session.id && order.status==nil)
+      order.product.available!
       order.delete
       flash[:alert]="Checkout session cancelled"
     else
