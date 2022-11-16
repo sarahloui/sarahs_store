@@ -1,4 +1,6 @@
 class OrdersController < ApplicationController
+  MAX_CART_HOLD_TIME = 300
+
   def new
     @order = Order.new
     @product = Product.find(params[:product])
@@ -16,7 +18,7 @@ class OrdersController < ApplicationController
         redirect_to root_url and return
       elsif product.on_hold?
         #Product has been in other users cart for less than 5 minutes
-        if product.order.created_at.since(300)>DateTime.now
+        if product.order.created_at.since(MAX_CART_HOLD_TIME)>DateTime.now
           flash[:alert] = "The item you selected is currently on hold, please try again in a few minutes"
           redirect_to root_url and return
         else
