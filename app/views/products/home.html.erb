@@ -11,7 +11,7 @@
     Description: <%= @product.description %>
   </p>
   <p>
-    Price: <%= number_to_currency(@product.price/100.00) %><br>
+    Price: <%= formatted_price(@product.price) %><br>
   </p>
    <%= form_tag checkout_path_url,  method: :post, data: { turbo: false } do %>
     <input type="hidden" name="product_id" value="<%= @product.id %>" />
@@ -19,6 +19,3 @@
   <% end %>
 
 <% end %>
-
-
-
