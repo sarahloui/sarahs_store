@@ -73,16 +73,20 @@ class OrdersController < ApplicationController
   end
 
   def cancel
-    incomplete_checkout_session = Stripe::Checkout::Session.retrieve(params[:session_id])
-    order = Order.find_by(id: incomplete_checkout_session.client_reference_id)
-    if (order!=nil && order.checkout_session==incomplete_checkout_session.id && order.status==nil)
-      order.product.available!
-      order.delete
-      flash[:alert]="Checkout session cancelled"
+    begin
+      incomplete_checkout_session = Stripe::Checkout::Session.retrieve(params[:session_id])
+    rescue Stripe::InvalidRequestError => e
+      puts "A Stripe invalid request error occurred due to the session_id parameter."
+      redirect_to root_url and return
     else
-      flash[:alert]="No matching checkout session to cancel"
+      order = Order.find_by(id: incomplete_checkout_session.client_reference_id)
+      if (order!=nil && order.checkout_session==incomplete_checkout_session.id && order.status==nil)
+        order.product.available!
+        order.delete
+        flash[:alert]="Checkout session cancelled"
+      end
+      redirect_to root_url
     end
-    redirect_to root_url
   end
 
   def success
