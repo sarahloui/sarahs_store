@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
   def home
-      @product = Product.second
+      @product = Product.where.not(status: "sold").first
   end
 
   def show
