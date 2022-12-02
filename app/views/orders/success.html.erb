@@ -1,7 +1,7 @@
 <h1>Thank you for your order, <%= @completed_checkout_session.customer_details.name %>!</h1>
 
 <h2>Your purchase of <%= @item_sold.description %> for
-<%= number_to_currency(@item_sold.price.unit_amount/100.00) %> is complete. <h2>
+<%= formatted_price(@item_sold.price.unit_amount) %> is complete. <h2>
 
 <h3>Your order details:</h3>
 
