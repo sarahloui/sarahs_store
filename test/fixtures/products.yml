@@ -1,11 +1,19 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  description: MyString
-  price: 1
+dress:
+  name: Silk Dress
+  description: Floral print silk dress
+  price: 12300
+  status: available
 
-two:
-  name: MyString
-  description: MyString
-  price: 1
+sandals:
+  name: Leather Sandals
+  description: Tan leather sandals
+  price: 3456
+  status: on_hold
+
+shorts:
+  name: Reformation Charlie Shorts
+  description: Striped shorts
+  price: 4850
+  status: sold
