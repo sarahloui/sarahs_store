@@ -5,6 +5,6 @@ class Offer < ApplicationRecord
 
   def complete
     self.update(status: 2, current: false)
-    self.product.increment!(:number_sold)
+    self.product.increment!(:number_sold, by=1, touch: true)
   end
 end
