@@ -53,11 +53,31 @@ class OffersController < ApplicationController
           quantity: 1,
         }],
         mode: 'payment',
-        success_url: root_url + 'orders/success?session_id={CHECKOUT_SESSION_ID}',
+        success_url: root_url + 'checkout_success?session_id={CHECKOUT_SESSION_ID}',
         cancel_url: root_url + 'orders/cancel?session_id={CHECKOUT_SESSION_ID}'
       })
       order.update(checkout_session: checkout_session.id)
       redirect_to checkout_session.url, allow_other_host: true
+    end
+  end
+
+  def checkout_success
+    checkout_session = Stripe::Checkout::Session.retrieve(params[:session_id])
+    @order = Order.find_by(id: checkout_session.client_reference_id)
+    if (checkout_session.status=="complete" && @order.status==nil)
+      @order.update(name: checkout_session.shipping_details.name,
+                    address_line1: checkout_session.shipping_details.address.line1,
+                    address_line2: checkout_session.shipping_details.address.line2,
+                    address_city: checkout_session.shipping_details.address.city,
+                    address_state: checkout_session.shipping_details.address.state,
+                    address_zip: checkout_session.shipping_details.address.postal_code,
+                    email: checkout_session.customer_details.email,
+                    phone_number: checkout_session.customer_details.phone,
+                    status: checkout_session.payment_status)
+      @order.offer.complete
+      self.create
+    else
+      redirect_to root_url
     end
   end
 
@@ -67,8 +87,4 @@ class OffersController < ApplicationController
     # increment number_sold?
     self.create
   end
-
-  def validate
-  end
-
 end

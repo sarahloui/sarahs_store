@@ -1,0 +1,15 @@
+<h1>Thank you for your order, <%= @order.name %>!</h1>
+
+<h2>Your purchase of <%= @order.offer.product.name %> for
+<%= formatted_price(@order.offer.product.price) %> is complete. <h2>
+
+<h3>Your order details:</h3>
+
+Order #<%= @order.id %>
+
+<div>Phone: <%= @order.phone_number %></div>
+<div>Email: <%= @order.email %></div>
+<div>Shipping Address:
+<div><%= @order.address_line1 %></div>
+<div><%= @order.address_line2 %></div>
+<div><%= @order.address_city %>, <%= @order.address_state %>, <%= @order.address_zip %> </div>
