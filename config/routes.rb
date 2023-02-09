@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
 
-  root "offers#home"
+  root :to => "offers#home"
   match 'accept_offer', to: 'offers#accept', via: :post
   get 'checkout_success', to: 'offers#checkout_success'
   get 'cancel_checkout', to: 'offers#cancel_checkout'
