@@ -6,11 +6,7 @@ Rails.application.routes.draw do
 
   root "offers#home"
   match 'accept_offer', to: 'offers#accept', via: :post
-  match 'checkout_path', to: 'orders#create', via: :post
   get 'checkout_success', to: 'offers#checkout_success'
-  get "orders/cancel"
-
-  resources :products
-  resources :orders
+  get 'cancel_checkout', to: 'offers#cancel_checkout'
 
 end
