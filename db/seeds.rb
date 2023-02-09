@@ -6,7 +6,8 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-Product.create!(
+p1 =Product.create!(
+  offers:[],
   name: "Slowtide Tarovine Towel",
   description: "100% cotton beach towel. Dimensions: 38 inches by 68 inches",
   price: 4500,
@@ -14,6 +15,9 @@ Product.create!(
   io: File.open('app/assets/images/SlowtideTarovineTowel.png'),
   filename: 'SlowtideTarovineTowel.png',
   content_type: 'image/png')
+
+offer1=Offer.new(product_id:1, status: 0, current: true)
+offer1.save
 
 Product.create!(
   name: "Reformation Nadira Dress",
