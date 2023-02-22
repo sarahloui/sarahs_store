@@ -13,8 +13,8 @@ class Offer < ApplicationRecord
     self.start_time.since(MAX_CART_HOLD_TIME)<DateTime.now
   end
 
-  def eligible_for_purchase?
-    self.current==true && self.available?
+  def eligible_for_checkout?
+    self.current==true && self.available? || (self.on_hold? && self.cart_time_limit_exceeded?)
   end
 
 
