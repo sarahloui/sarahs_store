@@ -5,8 +5,10 @@ class OffersController < ApplicationController
     else
       product = Product.find(product_id)
     end
-    offer = product.offers.build(status:"available", current: "true")
-    offer.save
+    @offer = product.offers.build(status:"available", current: "true")
+    @offer.save
+    Turbo::StreamsChannel.broadcast_update_to("home", target: "current_offer", partial:"offers/offer", locals:{offer: @offer})
+    Turbo::StreamsChannel.broadcast_update_to("home", target: "buy_button", partial:"offers/buy_button", locals:{offer: @offer})
   end
 
   def home

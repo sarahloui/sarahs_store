@@ -1,19 +1,12 @@
+<h1> Sarah's Store </h1>
+<%= turbo_stream_from "home" %>
 <% if @offer ==nil %>
   No offer is currently available
 <% else %>
-  <h1>
-    <%= @offer.product.name %>
-  </h1>
-  <% if @offer.product.image.attached? %>
-    <%= image_tag @offer.product.image.variant(resize_to_limit:[400,400]) %>
-  <% end %>
-  <p>
-    Description: <%= @offer.product.description %>
-  </p>
-  <p>
-    Price: <%= formatted_price(@offer.product.price) %><br>
-  </p>
-  <%= turbo_stream_from "home" %>
+  <div id="current_offer">
+  <%= render "offer", offer: @offer %>
+  </div>
+
   <div id="buy_button">
     <%= render "buy_button", offer: @offer %>
   </div>

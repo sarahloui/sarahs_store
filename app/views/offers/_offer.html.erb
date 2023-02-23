@@ -1,0 +1,12 @@
+<h2>
+  <%= offer.product.name %>
+</h2>
+<% if offer.product.image.attached? %>
+  <%= image_tag offer.product.image.variant(resize_to_limit:[400,400]) %>
+<% end %>
+<p>
+  Description: <%= offer.product.description %>
+</p>
+<p>
+  Price: <%= formatted_price(offer.product.price) %><br>
+</p>

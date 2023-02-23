@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   # root "articles#index"
 
   root :to => "offers#home"
-  match 'accept_offer', to: 'offers#accept', via: :post
+  post 'accept_offer', to: 'offers#accept'
   get 'checkout_success', to: 'offers#checkout_success'
   get 'cancel_checkout', to: 'offers#cancel_checkout'
 
