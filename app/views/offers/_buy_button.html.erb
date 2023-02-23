@@ -1,0 +1,4 @@
+<%= form_tag accept_offer_url,  method: :post, data: { turbo: false } do %>
+ <input type="hidden" name="offer_id" value="<%= offer.id %>" />
+ <%= submit_tag "Buy Now!", disabled: !offer.eligible_for_checkout? %>
+<% end %>

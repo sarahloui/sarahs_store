@@ -13,9 +13,10 @@
   <p>
     Price: <%= formatted_price(@offer.product.price) %><br>
   </p>
-   <%= form_tag accept_offer_url,  method: :post, data: { turbo: false } do %>
-    <input type="hidden" name="offer_id" value="<%= @offer.id %>" />
-    <%= submit_tag "Buy Now!", disabled: !@offer.eligible_for_checkout? %>
-  <% end %>
+  <%= turbo_stream_from "home" %>
+  <div id="buy_button">
+    <%= render "buy_button", offer: @offer %>
+  </div>
+
 
 <% end %>

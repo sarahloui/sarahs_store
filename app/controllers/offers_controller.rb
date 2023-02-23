@@ -17,25 +17,27 @@ class OffersController < ApplicationController
     if offer_id.nil?
       offer_id = params[:offer_id]
     end
-    offer = Offer.find(offer_id)
-    if offer.current==false
+    @offer = Offer.find(offer_id)
+    if @offer.current==false
       flash[:alert] = "The item you selected is no longer available"
       redirect_to root_url and return
     end
-    if offer.on_hold?
-      if offer.cart_time_limit_exceeded?
+    if @offer.on_hold?
+      if @offer.cart_time_limit_exceeded?
         self.release_hold(offer_id)
       else
         flash[:alert] = "The item you selected is in the process of being checked out. Please check back in a few minutes."
         redirect_to root_url and return
       end
     end
-    offer.reload
-    if offer.available? && offer.current?
-      order = offer.build_order(product_id: offer.product_id)
+    @offer.reload
+    if @offer.available? && @offer.current?
+      order = @offer.build_order(product_id: @offer.product_id)
       order.save
-      offer.on_hold!
-      offer.update(start_time: DateTime.now)
+      @offer.on_hold!
+      @offer.update(start_time: DateTime.now)
+      @offer.reload
+      Turbo::StreamsChannel.broadcast_update_to("home", target: "buy_button", partial:"offers/buy_button", locals:{offer: @offer})
       scc= StripeCheckoutsService.new
       scc.create_session(order.id)
       order.reload
@@ -60,10 +62,12 @@ class OffersController < ApplicationController
     order = Order.find_by(checkout_session: params[:session_id])
     if (order!=nil && order.status==nil)
       StripeCheckoutsService.new.expire_session(order.checkout_session)
-      order.offer.available!
+      @offer=order.offer
+      @offer.available!
       order.delete
       flash[:alert]="Checkout session cancelled"
     end
+    Turbo::StreamsChannel.broadcast_update_to("home", target: "buy_button", partial:"offers/buy_button", locals:{offer: @offer})
       redirect_to root_url
   end
 
