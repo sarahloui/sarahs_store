@@ -2,7 +2,7 @@
   <%= offer.product.name %>
 </h2>
 <% if offer.product.image.attached? %>
-  <%= image_tag offer.product.image.variant(resize_to_limit:[400,400]) %>
+  <%= image_tag url_for(offer.product.image.variant(resize_to_limit:[400,400])) %>
 <% end %>
 <p>
   Description: <%= offer.product.description %>

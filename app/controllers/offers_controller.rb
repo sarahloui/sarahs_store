@@ -1,4 +1,7 @@
 class OffersController < ApplicationController
+
+  skip_before_action :verify_authenticity_token
+  
   def create(product_id=nil)
     if product_id.nil?
       product = Product.order(:updated_at).first
