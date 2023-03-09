@@ -8,8 +8,7 @@ class StripeCheckoutsService
     end
   end
 
-  def create_session(order_id)
-    order = Order.find(order_id)
+  def create_session(order)
     stripe_checkout_session=Stripe::Checkout::Session.create({
       client_reference_id: order.id,
       phone_number_collection: {
@@ -33,6 +32,7 @@ class StripeCheckoutsService
        cancel_url: root_url + 'cancel_checkout?session_id={CHECKOUT_SESSION_ID}'
     })
     order.update(checkout_session: stripe_checkout_session.id)
+    return stripe_checkout_session.url
   end
 
   def checkout_session_url(session_id)
