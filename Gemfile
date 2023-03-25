@@ -55,6 +55,7 @@ group :development, :test do
   gem "capybara"
   gem "rspec-rails"
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+  gem "standard"
 end
 
 group :development do

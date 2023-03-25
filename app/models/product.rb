@@ -4,6 +4,6 @@ class Product < ApplicationRecord
   has_many :offers
 
   def increment_number_sold
-    self.increment!(:number_sold, touch:true)
+    increment!(:number_sold, touch: true)
   end
 end
