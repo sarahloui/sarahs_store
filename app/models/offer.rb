@@ -12,8 +12,10 @@ class Offer < ApplicationRecord
   def create_checkout
     prepare_for_checkout
     order = create_order!(product_id: product_id)
+    session_result = StripeCheckoutsService.create_session(order_id: order.id, product_name: product.name, product_price: product.price)
+    order.update!(checkout_session: session_result.id)
     update!(status: "on_hold", start_time: DateTime.now)
-    StripeCheckoutsService.create_session(order)
+    session_result.url
   end
 
   def prepare_for_checkout

@@ -1,6 +1,8 @@
 class StripeCheckoutsService
   include Rails.application.routes.url_helpers
 
+  SessionResult = Struct.new(:url, :id, keyword_init: true)
+
   def self.expire_session(session_id)
     checkout_session = Stripe::Checkout::Session.retrieve(session_id)
     if checkout_session.status == "open"
@@ -8,9 +10,9 @@ class StripeCheckoutsService
     end
   end
 
-  def self.create_session(order)
+  def self.create_session(order_id:, product_name:, product_price:)
     stripe_checkout_session = Stripe::Checkout::Session.create({
-      client_reference_id: order.id,
+      client_reference_id: order_id,
       phone_number_collection: {
         enabled: true
       },
@@ -21,9 +23,9 @@ class StripeCheckoutsService
         price_data: {
           currency: "usd",
           product_data: {
-            name: order.offer.product.name
+            name: product_name
           },
-          unit_amount: order.offer.product.price
+          unit_amount: product_price
         },
         quantity: 1
       }],
@@ -31,8 +33,7 @@ class StripeCheckoutsService
       success_url: Rails.application.routes.url_helpers.root_url + "checkout_success?session_id={CHECKOUT_SESSION_ID}",
       cancel_url: Rails.application.routes.url_helpers.root_url + "cancel_checkout?session_id={CHECKOUT_SESSION_ID}"
     })
-    order.update(checkout_session: stripe_checkout_session.id)
-    stripe_checkout_session.url
+    SessionResult.new(url: stripe_checkout_session.url, id: stripe_checkout_session.id)
   end
 
   def self.checkout_session_url(session_id)
