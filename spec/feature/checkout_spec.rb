@@ -50,6 +50,28 @@ describe "checkout", type: :feature do
         expect(page).to have_text("Dress")
         expect(page).to have_current_path(root_path + "checkout_success?session_id=abc123")
       end
+      it "allows for a completed order (version 2)" do
+        product = create(:product, name: "Jacket", number_sold: 0)
+        offer = create(:offer, product: product, current: true, status: "on_hold", start_time: 2.hours.ago)
+        order = create(:order, status: nil, checkout_session: "9999", offer: offer)
+        allow(StripeCheckoutsService).to receive(:expire_session)
+        allow(StripeCheckoutsService).to receive(:create_session) do
+          StripeCheckoutsService::SessionResult.new(
+            url: Rails.application.routes.url_helpers.root_url + "checkout_success?session_id=abc123",
+            id: "abc123"
+          )
+        end
+        allow(StripeCheckoutsService).to receive(:retrieve_completed_checkout_details) do
+          checkout_details = {name: "Ben", address_line1: "345 Kana St", status: "paid"}
+        end
+
+        visit root_url
+        click_on "Buy Now!"
+
+        expect(page).to have_text("Thank you for your order, Ben!")
+        expect(page).to have_text("Jacket")
+        expect(page).to have_current_path(root_path + "checkout_success?session_id=abc123")
+      end
     end
   end
 
