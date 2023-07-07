@@ -4,7 +4,8 @@ on: [push]
 jobs: 
   test:
     runs-on: ubuntu-latest
-    environment: test
+    env:
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY}}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby
